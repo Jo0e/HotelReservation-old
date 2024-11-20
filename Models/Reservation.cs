@@ -9,6 +9,10 @@
         public DateOnly CheckInDate { get; set; }
         public DateOnly CheckOutDate { get; set; }
         public int MealPrice { get; set; }
+        public int CouponId { get; set; }
+        public Coupon Coupon { get; set; }
+        public ICollection<ReservationRoom> ReservationRooms { get; set; }
+
     }
 
 }
