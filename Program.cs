@@ -38,6 +38,14 @@ namespace HotelReservation
 
             builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<IHotelAmenitiesRepository, HotelAmenitiesRepository>();
+            builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+            builder.Services.AddScoped<IImageListRepository, ImageListRepository>();
+            builder.Services.AddScoped<IReportRepository, ReportRepository>();
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+            builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

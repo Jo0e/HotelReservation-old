@@ -7,7 +7,7 @@
         public int AvailableRooms { get; set; }
         public int MaxPersons { get; set; }
         public int PricePN { get; set; }
-        public ICollection<Room> rooms { get; set; }
+        public ICollection<Room> Rooms { get; set; }
 
     }
 
