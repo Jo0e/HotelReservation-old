@@ -1,4 +1,5 @@
 using HotelReservation.Data;
+using HotelReservation.Models;
 using HotelReservation.Repository;
 using HotelReservation.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;
@@ -20,6 +21,10 @@ namespace HotelReservation
            .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
+            builder.Services.AddIdentity<ApplicationUsers, IdentityRole>()
+                .AddRoles<IdentityRole>()
+                .AddEntityFrameworkStores<ApplicationDbContext>();
+
             //builder.Services.AddAuthentication().AddGoogle(googleOptions =>
             //{
             //    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];
@@ -27,6 +32,14 @@ namespace HotelReservation
             //});
 
             // Other service registrations...
+            builder.Services.AddScoped<ICompanyRepository, CompanyRepository>();
+            builder.Services.AddScoped<IHotelRepository, HotelRepository>();
+            builder.Services.AddScoped<IHotelAmenitiesRepository, HotelAmenitiesRepository>();
+            builder.Services.AddScoped<ImageListRepository, ImageListRepository>();
+            builder.Services.AddScoped<IRoomRepository, RoomRepository>();
+            builder.Services.AddScoped<IReportRepository, ReportRepository>();
+            builder.Services.AddScoped<IReservationRepository, ReservationRepository>();
+
             builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
             {
                 options.SignIn.RequireConfirmedAccount = false;

@@ -11,7 +11,9 @@ namespace HotelReservation.Repository.IRepository
         void Commit();
 
         IEnumerable<T> Get(Expression<Func<T, object>>[]? include = null, Expression<Func<T, bool>>? where = null, bool tracked = true);
+
         public T? GetOne(Expression<Func<T, object>>[]? include = null, Expression<Func<T, bool>>? where = null, bool tracked = true);
+
         IQueryable<T> ThenInclude<TProperty, TThenProperty>(Expression<Func<T, TProperty>> includeExpression,
                 Expression<Func<TProperty, TThenProperty>> thenIncludeExpression);
 

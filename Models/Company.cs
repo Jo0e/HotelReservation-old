@@ -1,10 +1,9 @@
-﻿namespace HotelReservation.Models
+﻿using HotelReservation.DTO;
+
+namespace HotelReservation.Models
 {
-    public class Company
+    public class Company : ApplicationUserDto
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string Addres { get; set; }
-        public ICollection<Hotel> Hotels { get; set; }
+        
     }
 }
