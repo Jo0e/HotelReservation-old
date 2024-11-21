@@ -77,7 +77,7 @@ namespace HotelReservation.Areas.Identity.Contollers
                     if (finalResult)
                     {
                         
-                        await signInManager.SignInAsync(userDb, userVm.RemeberMe);
+                        await signInManager.SignInAsync(userDb, userVm.RememberMe);
                         return RedirectToAction("Index", "Home");
                     }
                     else
