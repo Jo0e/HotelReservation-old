@@ -12,13 +12,12 @@
         public int CompanyId { get; set; }
         public Company company { get; set; }
 
-        public int ImageListId { get; set; }    
-        public ImageList imageList { get; set; }
+        public List<ImageList> ImageLists { get; set; } = new List<ImageList>();
 
-        public int ReportId { get; set; }
+        public int? ReportId { get; set; }
         public Report Report { get; set; }
 
-        public ICollection<Room> Rooms { get; set; }
-        public ICollection<HotelAmenities> HotelAmenities { get; set; }
+        public ICollection<Room> Rooms { get; set; } = new List<Room>();
+        public ICollection<HotelAmenities> HotelAmenities { get; set; } = new List<HotelAmenities>();
     }
 }

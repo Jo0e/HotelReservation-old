@@ -3,7 +3,7 @@
     public class ImageList
     {
         public int Id { get; set; }
-        public List<string> ImgsUrl { get; set; } = new List<string>();
+        public string ImgUrl { get; set; } = string.Empty;
         public int HotelId { get; set; }
         public Hotel Hotel { get; set; }
 
