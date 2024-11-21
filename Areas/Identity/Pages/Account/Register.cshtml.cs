@@ -67,6 +67,10 @@ namespace HotelReservation.Areas.Identity.Pages.Account
             [Display(Name = "City")]
             public string City { get; set; }
 
+            [Required(ErrorMessage = "PhoneNumber is required.")]
+            [Display(Name = "PhoneNumber")]
+            public string PhoneNumber { get; set; }
+
             [Required(ErrorMessage = "Password is required.")]
             [StringLength(100, ErrorMessage = "The password must be at least {2} and at max {1} characters long.", MinimumLength = 6)]
             [DataType(DataType.Password)]
@@ -95,6 +99,8 @@ namespace HotelReservation.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
+                user.City = Input.City;
+                user.PhoneNumber = Input.PhoneNumber;
                 await _userStore.SetUserNameAsync(user, Input.UserName, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
