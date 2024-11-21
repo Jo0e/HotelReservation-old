@@ -80,11 +80,13 @@ namespace HotelReservation
             //app.MapStaticAssets();
 
             app.MapRazorPages();
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
+           
             app.Run();
         }
     }
