@@ -4,6 +4,6 @@ namespace HotelReservation.Models
 {
     public class ApplicationUsers : IdentityUser
     {
-        public string Address { get; set; }
+        public string City { get; set; }
     }
 }

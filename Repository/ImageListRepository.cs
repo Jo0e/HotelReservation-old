@@ -39,11 +39,11 @@ namespace HotelReservation.Repository
 
         public void UpdateImagesList(ImageList entity, List<IFormFile> newImageFiles, List<string> imagesToRemove)
         {
-            var entityId = (int)typeof(ImageList).GetProperty("Id").GetValue(entity);
+            var entityId = entity.Id; // Directly use the entity's Id
             var oldEntity = dbSet.AsNoTracking().FirstOrDefault(e => e.Id == entityId);
 
             // Remove images
-            if (imagesToRemove != null)
+            if (imagesToRemove != null && imagesToRemove.Count > 0)
             {
                 foreach (var img in imagesToRemove)
                 {
@@ -51,7 +51,7 @@ namespace HotelReservation.Repository
                     if (System.IO.File.Exists(oldFilePath))
                     {
                         System.IO.File.Delete(oldFilePath);
-                        entity.ImgsUrl.Remove(img);  // Remove the file name from the list
+                        entity.ImgsUrl.Remove(img);  // Remove the image from the list of URLs
                     }
                 }
             }
@@ -71,20 +71,24 @@ namespace HotelReservation.Repository
                             imageFile.CopyTo(stream);
                         }
 
-                        entity.ImgsUrl.Add(fileName);  // Add the new file name to the list
+                        entity.ImgsUrl.Add(fileName);  // Add the new image URL to the list
                     }
                 }
             }
 
+            // Detach the old entity from the context to avoid tracking issues
             var trackedEntity = dbSet.Local.FirstOrDefault(e => e.Id == entityId);
             if (trackedEntity != null)
             {
                 context.Entry(trackedEntity).State = EntityState.Detached;
             }
 
+            // Update the entity in the database
             dbSet.Update(entity);
             context.SaveChanges();
         }
+
+
 
 
         public void DeleteImageList(int id)
