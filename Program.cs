@@ -25,7 +25,7 @@ namespace HotelReservation
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
-           
+            
             //builder.Services.AddAuthentication().AddGoogle(googleOptions =>
             //{
             //    googleOptions.ClientId = builder.Configuration["Authentication:Google:ClientId"];

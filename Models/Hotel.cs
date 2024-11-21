@@ -14,9 +14,6 @@
 
         public List<ImageList> ImageLists { get; set; } = new List<ImageList>();
 
-        public int? ReportId { get; set; }
-        public Report Report { get; set; }
-
         public ICollection<Room> Rooms { get; set; } = new List<Room>();
         public ICollection<HotelAmenities> HotelAmenities { get; set; } = new List<HotelAmenities>();
     }
