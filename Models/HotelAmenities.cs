@@ -1,5 +1,8 @@
-﻿namespace HotelReservation.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace HotelReservation.Models
 {
+    
     public class HotelAmenities
     {
         public int HotelId { get; set; }

@@ -1,4 +1,5 @@
-﻿using HotelReservation.Data;
+﻿
+using HotelReservation.Data;
 using HotelReservation.Models;
 using HotelReservation.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;

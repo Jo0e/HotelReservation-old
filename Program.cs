@@ -21,9 +21,16 @@ namespace HotelReservation
            .UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 
-            builder.Services.AddIdentity<ApplicationUsers, IdentityRole>()
-                .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            // Other service registrations...
+            builder.Services.AddIdentity<ApplicationUsers, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.SignIn.RequireConfirmedEmail = false;
+            })
+                .AddDefaultUI()
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders();
+
 
             //builder.Services.AddAuthentication().AddGoogle(googleOptions =>
             //{
@@ -79,11 +86,13 @@ namespace HotelReservation
             //app.MapStaticAssets();
 
             app.MapRazorPages();
+
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{area=Customer}/{controller=Home}/{action=Index}/{id?}")
                 .WithStaticAssets();
 
+           
             app.Run();
         }
     }
