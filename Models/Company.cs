@@ -1,4 +1,5 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace HotelReservation.Models
@@ -21,5 +22,8 @@ namespace HotelReservation.Models
         [DataType(DataType.Password)]
         [Compare(nameof(Passwords))]
         public string ConfirmPassword { get; set; }
+
+        [ValidateNever]
+        public ICollection<Hotel> Hotels { get; set; }
     }
 }

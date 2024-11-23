@@ -4,6 +4,7 @@ using HotelReservation.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HotelReservation.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241122234809_init")]
+    partial class init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,6 +88,9 @@ namespace HotelReservation.Migrations
                     b.Property<bool>("PhoneNumberConfirmed")
                         .HasColumnType("bit");
 
+                    b.Property<int?>("ReportDetailsId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
@@ -95,6 +101,8 @@ namespace HotelReservation.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ReportDetailsId");
 
                     b.ToTable("Users");
                 });
@@ -189,7 +197,7 @@ namespace HotelReservation.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ReportId")
+                    b.Property<int?>("ReportId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -279,17 +287,11 @@ namespace HotelReservation.Migrations
                     b.Property<int>("ReservationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("ReportId");
 
                     b.HasIndex("ReservationId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("ReportDetails");
                 });
@@ -378,6 +380,9 @@ namespace HotelReservation.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AvailableRooms")
+                        .HasColumnType("int");
 
                     b.Property<int>("MaxPersons")
                         .HasColumnType("int");
@@ -507,6 +512,13 @@ namespace HotelReservation.Migrations
                     b.ToTable("UserTokens");
                 });
 
+            modelBuilder.Entity("HotelReservation.Models.ApplicationUsers", b =>
+                {
+                    b.HasOne("HotelReservation.Models.ReportDetails", null)
+                        .WithMany("Users")
+                        .HasForeignKey("ReportDetailsId");
+                });
+
             modelBuilder.Entity("HotelReservation.Models.Hotel", b =>
                 {
                     b.HasOne("HotelReservation.Models.Company", "company")
@@ -571,15 +583,7 @@ namespace HotelReservation.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("HotelReservation.Models.ApplicationUsers", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Reservation");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("HotelReservation.Models.Reservation", b =>
@@ -659,6 +663,11 @@ namespace HotelReservation.Migrations
             modelBuilder.Entity("HotelReservation.Models.Report", b =>
                 {
                     b.Navigation("ReportDetails");
+                });
+
+            modelBuilder.Entity("HotelReservation.Models.ReportDetails", b =>
+                {
+                    b.Navigation("Users");
                 });
 
             modelBuilder.Entity("HotelReservation.Models.Reservation", b =>

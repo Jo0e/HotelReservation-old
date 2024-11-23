@@ -156,6 +156,19 @@ namespace HotelReservation.Repository
 
         }
 
+        public void DeleteWithImage(T entity, string imageFolder, string imageProperty)
+        {
+            var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\{imageFolder}\\{imageProperty}");
+            if (System.IO.File.Exists(oldFilePath))
+            {
+                System.IO.File.Delete(oldFilePath);
+            }
+            dbSet.Remove(entity);
+
+        }
+
+
+
 
     }
 }

@@ -20,6 +20,8 @@ namespace HotelReservation.Repository.IRepository
 
         void UpdateImage(T entity, IFormFile imageFile, string currentImagePath, string imageFolder, string imageUrlProperty);
         void CreateWithImage(T entity, IFormFile imageFile, string imageFolder, string imageUrlProperty);
+        void DeleteWithImage(T entity, string imageFolder, string imageProperty);
+
 
     }
 }

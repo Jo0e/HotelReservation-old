@@ -10,17 +10,20 @@ namespace HotelReservation.Data
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-        public DbSet<Hotel> hotels { get; set; }
-        public DbSet<Company> companies { get; set; }
-        public DbSet<Coupon> coupons { get; set; }
-        public DbSet<HotelAmenities> hotelAmenities { get; set; }
-        public DbSet<ImageList> imageLists { get; set; }
-        public DbSet<Report> reports { get; set; }
-        public DbSet<ReportDetails> reportDetails { get; set; }
-        public DbSet<Reservation> reservations { get; set; }
-        public DbSet<Room> rooms { get; set; }
-        public DbSet<ReservationRoom> reservationRooms { get; set; }
-        public DbSet<RoomType> roomTypes { get; set; }
+        
+        public DbSet<Amenity> Amenities { get; set; }
+        public DbSet<Company>  Companies { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
+        public DbSet<Hotel> Hotels { get; set; }
+        public DbSet<HotelAmenities> HotelAmenities { get; set; }
+        public DbSet<ImageList> ImageLists { get; set; }
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<ReportDetails> ReportDetails { get; set; }
+        public DbSet<Reservation> Reservations { get; set; }
+        public DbSet<ReservationRoom>  ReservationRooms { get; set; }
+        public DbSet<Room> Rooms { get; set; }
+        public DbSet<RoomType> RoomTypes { get; set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -34,8 +37,12 @@ namespace HotelReservation.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<HotelAmenities>().HasKey(e=> new { e.HotelId,e.AmenityId});
-            modelBuilder.Entity<ReservationRoom>().HasKey(e => new { e.ReservationID, e.RoomId });
+            modelBuilder.Entity<HotelAmenities>()
+                .HasKey(e=> new { e.HotelId,e.AmenityId});
+
+            modelBuilder.Entity<ReservationRoom>()
+                .HasKey(e => new { e.ReservationID, e.RoomId });
+
             modelBuilder.Entity<IdentityUserLogin<string>>(entity =>
             {
                 entity.HasKey(login => new { login.LoginProvider, login.ProviderKey });
@@ -50,6 +57,22 @@ namespace HotelReservation.Data
             {
                 entity.HasKey(token => new { token.UserId, token.LoginProvider, token.Name });
             });
+
+             
+            modelBuilder.Entity<Hotel>()
+            .HasOne(h => h. company)
+            .WithMany(c => c.Hotels)
+            .HasForeignKey(h => h.CompanyId);
+            
+            modelBuilder.Entity<ImageList>()
+            .HasOne(il => il.Hotel)
+            .WithMany(h => h.ImageLists)
+            .HasForeignKey(il => il.HotelId);
+            
+            modelBuilder.Entity<Hotel>()
+            .HasOne(h => h.Report)
+            .WithOne(r => r.Hotel)
+            .HasForeignKey<Report>(r => r.HotelId);
 
         }
     }
