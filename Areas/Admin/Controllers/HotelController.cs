@@ -95,7 +95,30 @@ namespace HotelReservation.Areas.Admin.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        
+        public ActionResult ImageList(int hotelId)
+        {
+            Response.Cookies.Append("HotelId", hotelId.ToString());
+            ViewBag.HotelName = hotelRepository.GetOne(where: n => n.Id == hotelId).Name;
+            var imgs = imageListRepository.Get(where: p => p.HotelId == hotelId);
+            return View(imgs);
+        }
+        public ActionResult CreateImgList()
+        {
+            return View();
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateImgList(ImageList imageList,ICollection<IFormFile> ImgUrl)
+        {
+            var hotelId = int.Parse(Request.Cookies["HotelId"]);
+            var hotel = hotelRepository.GetOne(where:e=>e.Id== hotelId, tracked: false);
+            imageList.HotelId = hotelId;
+            imageListRepository.CreateImagesList(imageList,ImgUrl,hotel.Name);
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
 
     }
 }

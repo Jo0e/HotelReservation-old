@@ -1,0 +1,35 @@
+﻿@model IEnumerable<HotelReservation.Models.ImageList>
+
+@{
+    ViewData["Title"] = "ImageList";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string folderName = ViewBag.HotelName;
+}
+
+<h1>ImageList</h1>
+
+<p>
+    <a asp-action="CreateImgList">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ImgUrl)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <img src="~/imges/sub imgs/@folderName/@item.ImgUrl"  class="w-25 h-25" alt="Alternate Text" />
+            </td>
+           
+            <td>
+                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

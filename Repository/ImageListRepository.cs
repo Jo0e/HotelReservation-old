@@ -12,52 +12,84 @@ namespace HotelReservation.Repository
         {
         }
 
-        public void CreateImagesList(ImageList entity, IFormFile imageFile)
+        public void CreateImagesList(ImageList entity, ICollection<IFormFile> imageFiles, string hotelName)
         {
-            if (imageFile != null && imageFile.Length > 0)
+            if (imageFiles != null && imageFiles.Count > 0)
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\sub imgs", fileName);
+                var hotelFolderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\sub imgs\\{hotelName}");
 
-                using (var stream = System.IO.File.Create(filePath))
+                // Create the directory if it doesn't exist
+                if (!Directory.Exists(hotelFolderPath))
                 {
-                    imageFile.CopyTo(stream);
+                    Directory.CreateDirectory(hotelFolderPath);
                 }
 
-                entity.ImgUrl = fileName;  // Set the file name
-            }
+                foreach (var imageFile in imageFiles)
+                {
+                    if (imageFile.Length > 0)
+                    {
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                        var filePath = Path.Combine(hotelFolderPath, fileName);
 
-            dbSet.Add(entity);
-            context.SaveChanges();
+                        using (var stream = System.IO.File.Create(filePath))
+                        {
+                            imageFile.CopyTo(stream);
+                        }
+
+                        var newImageList = new ImageList
+                        {
+                            HotelId = entity.HotelId,
+                            ImgUrl = fileName
+                        };
+
+                        dbSet.Add(newImageList);
+                    }
+                }
+
+                context.SaveChanges();
+            }
         }
 
-        public void UpdateImagesList(ImageList entity, IFormFile newImageFile)
+
+        public void UpdateImagesList(ImageList entity, ICollection<IFormFile> newImageFiles, string hotelName)
         {
             var entityId = (int)typeof(ImageList).GetProperty("Id").GetValue(entity);
             var oldEntity = dbSet.AsNoTracking().FirstOrDefault(e => e.Id == entityId);
 
+            // Path to the hotel-specific folder
+            var hotelFolderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\sub imgs\\{hotelName}");
+
             // Remove old image
             if (oldEntity != null && !string.IsNullOrEmpty(oldEntity.ImgUrl))
             {
-                var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\sub imgs", oldEntity.ImgUrl);
+                var oldFilePath = Path.Combine(hotelFolderPath, oldEntity.ImgUrl);
                 if (System.IO.File.Exists(oldFilePath))
                 {
                     System.IO.File.Delete(oldFilePath);
                 }
             }
 
-            // Add new image
-            if (newImageFile != null && newImageFile.Length > 0)
+            // Create the directory if it doesn't exist
+            if (!Directory.Exists(hotelFolderPath))
             {
-                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(newImageFile.FileName);
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\sub imgs", fileName);
+                Directory.CreateDirectory(hotelFolderPath);
+            }
 
-                using (var stream = System.IO.File.Create(filePath))
+            // Add new images
+            foreach (var imageFile in newImageFiles)
+            {
+                if (imageFile.Length > 0)
                 {
-                    newImageFile.CopyTo(stream);
-                }
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(imageFile.FileName);
+                    var filePath = Path.Combine(hotelFolderPath, fileName);
 
-                entity.ImgUrl = fileName;  // Set the new file name
+                    using (var stream = System.IO.File.Create(filePath))
+                    {
+                        imageFile.CopyTo(stream);
+                    }
+
+                    entity.ImgUrl = fileName;  // Set the new file name
+                }
             }
 
             var trackedEntity = dbSet.Local.FirstOrDefault(e => e.Id == entityId);
@@ -70,20 +102,26 @@ namespace HotelReservation.Repository
             context.SaveChanges();
         }
 
-        public void DeleteImageList(int id)
+        public void DeleteImageList(int id, string hotelName)
         {
             var entity = dbSet.Find(id);
             if (entity != null)
             {
-                var filePath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\sub imgs", entity.ImgUrl);
+                // Path to the hotel-specific folder
+                var hotelFolderPath = Path.Combine(Directory.GetCurrentDirectory(), $"wwwroot\\imges\\sub imgs\\{hotelName}");
+                var filePath = Path.Combine(hotelFolderPath, entity.ImgUrl);
+
+                // Remove the image file
                 if (System.IO.File.Exists(filePath))
                 {
                     System.IO.File.Delete(filePath);
                 }
 
+                // Remove the entity from the database
                 dbSet.Remove(entity);
                 context.SaveChanges();
             }
         }
+
     }
 }

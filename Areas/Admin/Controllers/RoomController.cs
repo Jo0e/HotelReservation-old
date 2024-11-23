@@ -1,9 +1,6 @@
 ﻿using HotelReservation.Models;
-using HotelReservation.Repository;
 using HotelReservation.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace HotelReservation.Areas.Admin.Controllers
 {
@@ -14,7 +11,7 @@ namespace HotelReservation.Areas.Admin.Controllers
         private readonly IHotelRepository hotelRepository;
         private readonly IRepository<RoomType> typeRepository;
 
-        public RoomController(IRoomRepository roomRepository, IHotelRepository hotelRepository,IRepository<RoomType> TypeRepository)
+        public RoomController(IRoomRepository roomRepository, IHotelRepository hotelRepository, IRepository<RoomType> TypeRepository)
         {
             this.roomRepository = roomRepository;
             this.hotelRepository = hotelRepository;
@@ -24,16 +21,28 @@ namespace HotelReservation.Areas.Admin.Controllers
         // GET: RoomController
         public ActionResult Index(int id)
         {
-            ViewBag.Id = id;
-            var rooms = roomRepository.Get(where: e => e.HotelId == id);
-            return View(rooms);
+
+            IEnumerable<Room> rooms;
+            if (id != 0)
+            {
+                Response.Cookies.Append("HotelId", id.ToString());
+                rooms = roomRepository.Get(where: e => e.HotelId == id, include: [e => e.Hotel, w => w.RoomType]);
+                return View(rooms);
+            }
+            else if (id == 0)
+            {
+                var hotelId = int.Parse(Request.Cookies["HotelId"]);
+                rooms = roomRepository.Get(where: e => e.HotelId == hotelId, include: [e => e.Hotel, w => w.RoomType]);
+                return View(rooms);
+            }
+            return NotFound();
+
         }
 
 
         // GET: RoomController/Create
-        public ActionResult Create(int id)
+        public ActionResult Create()
         {
-            ViewBag.HotelId = id;
             ViewBag.Type = typeRepository.Get();
             return View();
         }
@@ -41,58 +50,57 @@ namespace HotelReservation.Areas.Admin.Controllers
         // POST: RoomController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Room room)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            var hotelId = int.Parse(Request.Cookies["HotelId"]);
+            room.HotelId = hotelId;
+
+            roomRepository.Create(room);
+            roomRepository.Commit();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: RoomController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
+        //public ActionResult Book(int id)
+        //{
+        //    var room = roomRepository.GetOne(where: r => r.Id == id);
+        //    roomRepository.Update(room);
+        //    return View();
+        //}
 
         // POST: RoomController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+
+        public ActionResult Book(int id)
         {
-            try
+            var room = roomRepository.GetOne(where: r => r.Id == id);
+            if (room.IsAvailable == true)
             {
-                return RedirectToAction(nameof(Index));
+                room.IsAvailable = false;
             }
-            catch
+            else
             {
-                return View();
+                room.IsAvailable = true;
             }
+            roomRepository.Update(room);
+            roomRepository.Commit();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: RoomController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var room = roomRepository.GetOne(where: a => a.Id == id, include: [e => e.Hotel, w => w.RoomType]);
+            return View(room);
         }
 
         // POST: RoomController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(Room room)
         {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            roomRepository.Delete(room);
+            roomRepository.Commit();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
